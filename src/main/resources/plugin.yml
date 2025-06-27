@@ -1,0 +1,4 @@
+name: BlockFlow
+version: '1.0.0'
+main: dev.lrxh.blockFlow.BlockFlow
+api-version: '1.20'
