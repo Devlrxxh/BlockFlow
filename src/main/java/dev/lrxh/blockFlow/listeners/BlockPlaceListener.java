@@ -51,7 +51,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                 Location blockLoc = position.toLocation(player.getWorld());
                 BoundingBox blockBox = BoundingBox.of(blockLoc, blockLoc.getX() + 1, blockLoc.getY() + 1, blockLoc.getZ() + 1);
 
-                for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 1)) {
+                for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 2)) {
                     if (blockBox.overlaps(entity.getBoundingBox())) {
                         player.sendBlockChange(blockLoc, stage.getBlockDataAt(position).getBlockData());
                         return;
