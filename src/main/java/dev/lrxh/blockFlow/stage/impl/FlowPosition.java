@@ -1,6 +1,5 @@
 package dev.lrxh.blockFlow.stage.impl;
 
-import com.github.retrooper.packetevents.util.Vector3i;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -26,10 +25,6 @@ public class FlowPosition {
 
     public Location toLocation(World world) {
         return new Location(world, x, y, z);
-    }
-
-    public Vector3i toVector3i() {
-        return new Vector3i(x, y, z);
     }
 
     @Override

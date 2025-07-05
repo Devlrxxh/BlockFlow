@@ -58,15 +58,7 @@ public class BlockBreakListener extends PacketListenerAbstract {
                             stage.setBlockDataAt(position, block.getBlockData(), blockFlow.getPlugin());
                         } else {
                             stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
-
-                            for (Material drop : block.getDrops()) {
-                                Item item = location.getWorld().dropItemNaturally(location, new ItemStack(drop));
-                                item.getPersistentDataContainer().set(
-                                        new NamespacedKey(blockFlow.getPlugin(), "blockFlow"),
-                                        PersistentDataType.STRING,
-                                        stage.getUuid().toString());
-                            }
-
+                            // HANDLE BLOCK DROPS
                         }
                     });
                 }
