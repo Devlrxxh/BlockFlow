@@ -1,8 +1,8 @@
 package dev.lrxh.blockFlow.events;
 
-import dev.lrxh.blockFlow.FlowBlock;
-import dev.lrxh.blockFlow.FlowPosition;
-import dev.lrxh.blockFlow.FlowStage;
+import dev.lrxh.blockFlow.stage.FlowStage;
+import dev.lrxh.blockFlow.stage.impl.FlowBlock;
+import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class FlowBreakEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private boolean cancelled = false;
     private final Player player;
     private final FlowPosition position;
     private final FlowBlock block;
     private final FlowStage stage;
+    private boolean cancelled = false;
 
     public FlowBreakEvent(Player player, FlowPosition position, FlowBlock block, FlowStage stage) {
         this.player = player;
@@ -26,12 +26,12 @@ public class FlowBreakEvent extends Event implements Cancellable {
         this.stage = stage;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

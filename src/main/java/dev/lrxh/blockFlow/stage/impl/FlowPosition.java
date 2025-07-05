@@ -1,10 +1,9 @@
-package dev.lrxh.blockFlow;
+package dev.lrxh.blockFlow.stage.impl;
 
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.Locale;
 import java.util.Objects;
 
 @Getter

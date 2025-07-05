@@ -1,4 +1,4 @@
-package dev.lrxh.blockFlow;
+package dev.lrxh.blockFlow.stage.impl;
 
 import lombok.Getter;
 import org.bukkit.GameMode;
@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
 

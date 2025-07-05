@@ -1,4 +1,4 @@
-package dev.lrxh.blockFlow;
+package dev.lrxh.blockFlow.stage;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.User;
@@ -9,6 +9,8 @@ import com.github.retrooper.packetevents.protocol.world.chunk.impl.v_1_18.Chunk_
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChunkData;
+import dev.lrxh.blockFlow.stage.impl.FlowBlock;
+import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -28,10 +30,10 @@ public class FlowStage {
     private final Location pos1, pos2;
     @Getter
     private final Set<UUID> watchers;
-    private Map<FlowPosition, FlowBlock> blocks;
-    private Map<FlowPosition, BlockData> modifiedBlocks;
     @Getter
     private final UUID uuid;
+    private final Map<FlowPosition, BlockData> modifiedBlocks;
+    private Map<FlowPosition, FlowBlock> blocks;
 
     public FlowStage(Location pos1, Location pos2) {
         this.world = pos1.getWorld();
@@ -94,7 +96,7 @@ public class FlowStage {
         watchers.remove(player.getUniqueId());
     }
 
-    protected void sendChunkToPlayer(Player player, int chunkX, int chunkZ) {
+    public void sendChunkToPlayer(Player player, int chunkX, int chunkZ) {
         User packetUser = PacketEvents.getAPI().getPlayerManager().getUser(player);
         int minHeight = world.getMinHeight();
         int ySections = packetUser.getTotalWorldHeight() >> 4;

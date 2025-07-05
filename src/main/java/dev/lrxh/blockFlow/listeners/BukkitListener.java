@@ -1,5 +1,6 @@
-package dev.lrxh.blockFlow;
+package dev.lrxh.blockFlow.listeners;
 
+import dev.lrxh.blockFlow.BlockFlow;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.Listener;
 
