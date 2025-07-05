@@ -10,6 +10,7 @@ import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.events.FlowPlaceEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
+import dev.lrxh.blockFlow.utils.BoundingBoxUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -54,10 +55,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                 packet.setCancelled(true);
 
                 Location blockLoc = position.toLocation(player.getWorld());
-                BoundingBox blockBox = BoundingBox.of(
-                        blockLoc.toVector(),
-                        blockLoc.clone().add(1, 1, 1).toVector()
-                );
+                BoundingBox blockBox = BoundingBoxUtils.createBlockBB(position, player.getWorld());
 
                 for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 3)) {
                     if (blockBox.overlaps(entity.getBoundingBox())) {
