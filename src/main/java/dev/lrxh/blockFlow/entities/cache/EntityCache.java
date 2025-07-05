@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Getter
 public class EntityCache {
-    @Getter
     private final Map<Integer, Entity> entities;
 
     public EntityCache() {

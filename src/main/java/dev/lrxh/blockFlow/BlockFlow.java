@@ -8,18 +8,17 @@ import dev.lrxh.blockFlow.entities.task.PlayerGroundCheckTask;
 import dev.lrxh.blockFlow.listeners.*;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public final class BlockFlow {
-    @Getter
     private final JavaPlugin plugin;
-    @Getter
     private final List<FlowStage> stages;
-    @Getter
     private final EntityCache entityCache;
 
     public BlockFlow(JavaPlugin plugin) {
@@ -46,7 +45,10 @@ public final class BlockFlow {
 
     }
 
-    public void addStage(FlowStage stage) {
+    public FlowStage createStage(Location pos1, Location pos2) {
+        FlowStage stage = new FlowStage(pos1, pos2);
         stages.add(stage);
+
+        return stage;
     }
 }

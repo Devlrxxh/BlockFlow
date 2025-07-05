@@ -66,7 +66,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
 
                 Bukkit.getScheduler().runTask(blockFlow.getPlugin(), () -> {
                     ItemStack itemInHand = player.getInventory().getItemInMainHand();
-                    if (itemInHand == null || !itemInHand.getType().isBlock()) {
+                    if (!itemInHand.getType().isBlock()) {
                         return;
                     }
 
