@@ -9,8 +9,11 @@
 ```java
 BlockFlow blockFlow = new BlockFlow(plugin);
 
-// Create a stage using two corners of an arena
-FlowStage stage = blockFlow.createStage(standAloneArena.getMin(), standAloneArena.getMax());
+Location min = ...;
+Location max = ...;
+
+// Create a stage, this copies all the blocks between both locations
+FlowStage stage = blockFlow.createStage(min, max);
 
 // Offset the stage by 100 blocks on the X axis
 stage.offset(100, 0, 0);
