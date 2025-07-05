@@ -35,7 +35,8 @@ public final class BlockFlow {
                 new ChunkListener(this),
                 new BlockBreakListener(this),
                 new BlockPlaceListener(this),
-                new BlockChangeListener(this)
+                new BlockChangeListener(this),
+                new PlayerMoveListener(this)
         ).forEach(listener -> PacketEvents.getAPI().getEventManager().registerListener(listener));
 
         PacketEvents.getAPI().init();

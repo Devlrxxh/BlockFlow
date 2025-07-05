@@ -32,7 +32,7 @@ public class PlayerGroundCheckTask implements Runnable {
                 FlowBlock block = stage.getBlockDataAt(position);
 
                 if (block.getBlockData().getMaterial().isSolid()) {
-                    player.setAllowFlight(true);
+                    player.setAllowFlight(true); // The makes it so the player doesn't get kicked for flying
                 }
             }
         }
