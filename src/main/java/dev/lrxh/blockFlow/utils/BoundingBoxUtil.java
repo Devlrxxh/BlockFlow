@@ -7,7 +7,7 @@ import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 
 @UtilityClass
-public class BoundingBoxUtils {
+public class BoundingBoxUtil {
     public BoundingBox createBlockBB(FlowPosition position, World world) {
         Location blockLoc = position.toLocation(world);
         return BoundingBox.of(

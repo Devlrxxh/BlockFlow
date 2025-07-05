@@ -44,6 +44,15 @@ public class FlowStage {
         this.uuid = UUID.randomUUID();
     }
 
+    private FlowStage(World world, Location pos1, Location pos2, Map<FlowPosition, FlowBlock> blocks) {
+        this.world = world;
+        this.pos1 = pos1.clone();
+        this.pos2 = pos2.clone();
+        this.blocks = blocks;
+        this.watchers = new HashSet<>();
+        this.uuid = UUID.randomUUID();
+    }
+
     private Map<FlowPosition, FlowBlock> capture() {
         Map<FlowPosition, FlowBlock> blocks = new HashMap<>();
 
@@ -281,5 +290,9 @@ public class FlowStage {
                 player.sendBlockChange(pos.toLocation(world), blockData);
             }
         });
+    }
+
+    public FlowStage clone() {
+        return new FlowStage(world, pos1, pos2, new HashMap<>(blocks));
     }
 }
