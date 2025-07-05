@@ -31,6 +31,7 @@ public class FlowBlock {
     public FlowBlock(BlockData blockData) {
         this.blockData = blockData;
         this.drops = new ArrayList<>();
+        this.drops.add(blockData.getMaterial());
     }
 
     public boolean canInstantBreak(Player player) {
