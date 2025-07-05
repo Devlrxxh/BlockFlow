@@ -3,18 +3,24 @@ package dev.lrxh.blockFlow.listeners;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
 import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.events.FlowPlaceEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
+import io.papermc.paper.math.BlockPosition;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 
 @AllArgsConstructor
 public class BlockPlaceListener extends PacketListenerAbstract {
@@ -31,13 +37,26 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                 if (!stage.getWatchers().contains(player.getUniqueId())) continue;
                 if (!stage.getWorld().equals(player.getWorld())) continue;
 
+                Vector3i clickedBlockPos = wrapper.getBlockPosition();
+                BlockFace face = wrapper.getFace();
+
                 FlowPosition position = new FlowPosition(
-                        wrapper.getBlockPosition().getX(),
-                        wrapper.getBlockPosition().getY(),
-                        wrapper.getBlockPosition().getZ()
+                        clickedBlockPos.getX() + face.getModX(),
+                        clickedBlockPos.getY() + face.getModY(),
+                        clickedBlockPos.getZ() + face.getModZ()
                 );
 
                 packet.setCancelled(true);
+
+                Location blockLoc = position.toLocation(player.getWorld());
+                BoundingBox blockBox = BoundingBox.of(blockLoc, blockLoc.getX() + 1, blockLoc.getY() + 1, blockLoc.getZ() + 1);
+
+                for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 1)) {
+                    if (blockBox.overlaps(entity.getBoundingBox())) {
+                        player.sendBlockChange(blockLoc, stage.getBlockDataAt(position).getBlockData());
+                        return;
+                    }
+                }
 
                 Bukkit.getScheduler().runTask(blockFlow.getPlugin(), () -> {
                     ItemStack itemInHand = player.getInventory().getItemInMainHand();
