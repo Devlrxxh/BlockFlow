@@ -21,7 +21,7 @@ public class EntityCache {
     public List<LivingEntity> getNearbyLivingEntities(Location location, double radius) {
         return entities.values().stream()
                 .filter(entity -> entity instanceof LivingEntity)
-                .filter(entity -> !entity.equals(location))
+                .filter(entity -> !entity.getLocation().equals(location))
                 .filter(entity -> entity.getLocation().distance(location) <= radius)
                 .map(entity -> (LivingEntity) entity)
                 .collect(Collectors.toList());
