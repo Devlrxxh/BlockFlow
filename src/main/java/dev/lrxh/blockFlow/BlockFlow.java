@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public final class BlockFlow {
     @Getter
@@ -16,7 +17,7 @@ public final class BlockFlow {
     public BlockFlow(JavaPlugin plugin) {
         this.plugin = plugin;
         this.stages = new ArrayList<>();
-        this.plugin.getServer().getPluginManager().registerEvents(new BukkitListener(), plugin);
+        this.plugin.getServer().getPluginManager().registerEvents(new BukkitListener(this), plugin);
 
         PacketEvents.getAPI().getEventManager().registerListener(new ChunkLoadListener(this));
         PacketEvents.getAPI().init();
@@ -24,5 +25,14 @@ public final class BlockFlow {
 
     public void addStage(FlowStage stage) {
         stages.add(stage);
+    }
+
+    public FlowStage getByUUID(UUID uuid) {
+        for (FlowStage stage : stages) {
+            if (stage.getUuid().equals(uuid)) {
+                return stage;
+            }
+        }
+        return null;
     }
 }

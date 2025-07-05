@@ -1,7 +1,10 @@
 package dev.lrxh.blockFlow;
 
 import lombok.Getter;
+import org.bukkit.Location;
+import org.bukkit.World;
 
+import java.util.Locale;
 import java.util.Objects;
 
 @Getter
@@ -19,6 +22,10 @@ public class FlowPosition {
         if (this == o) return true;
         if (!(o instanceof FlowPosition that)) return false;
         return x == that.x && y == that.y && z == that.z;
+    }
+
+    public Location toLocation(World world) {
+        return new Location(world, x, y, z);
     }
 
     @Override

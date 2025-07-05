@@ -28,8 +28,10 @@ public class FlowStage {
     private final Location pos1, pos2;
     @Getter
     private final Set<UUID> watchers;
+    private Map<FlowPosition, FlowBlock> blocks;
+    private Map<FlowPosition, BlockData> modifiedBlocks;
     @Getter
-    private Map<FlowPosition, BlockData> blocks;
+    private final UUID uuid;
 
     public FlowStage(Location pos1, Location pos2) {
         this.world = pos1.getWorld();
@@ -37,10 +39,12 @@ public class FlowStage {
         this.pos2 = pos2.clone();
         this.blocks = capture();
         this.watchers = new HashSet<>();
+        this.modifiedBlocks = new HashMap<>();
+        this.uuid = UUID.randomUUID();
     }
 
-    private Map<FlowPosition, BlockData> capture() {
-        Map<FlowPosition, BlockData> blocks = new HashMap<>();
+    private Map<FlowPosition, FlowBlock> capture() {
+        Map<FlowPosition, FlowBlock> blocks = new HashMap<>();
 
         this.blocks = new HashMap<>();
         World world = pos1.getWorld();
@@ -58,7 +62,7 @@ public class FlowStage {
                 for (int z = minZ; z <= maxZ; z++) {
                     Block block = world.getBlockAt(x, y, z);
                     if (block.getType().toString().toLowerCase().contains("air")) continue;
-                    blocks.put(new FlowPosition(x, y, z), block.getBlockData().clone());
+                    blocks.put(new FlowPosition(x, y, z), new FlowBlock(block));
                 }
             }
         }
@@ -67,7 +71,7 @@ public class FlowStage {
     }
 
     public void offset(int x, int y, int z) {
-        Map<FlowPosition, BlockData> newBlocks = new HashMap<>();
+        Map<FlowPosition, FlowBlock> newBlocks = new HashMap<>();
         for (FlowPosition pos : blocks.keySet()) {
             newBlocks.put(new FlowPosition(pos.getX() + x, pos.getY() + y, pos.getZ() + z), blocks.get(pos));
         }
@@ -127,8 +131,11 @@ public class FlowStage {
         Map<BlockData, WrappedBlockState> blockDataToState = new HashMap<>();
         WrappedBlockState airState = SpigotConversionUtil.fromBukkitBlockData(Bukkit.createBlockData(Material.AIR));
 
-        for (Map.Entry<FlowPosition, BlockData> entry : blocks.entrySet()) {
-            FlowPosition pos = entry.getKey();
+        Set<FlowPosition> allPositions = new HashSet<>();
+        allPositions.addAll(blocks.keySet());
+        allPositions.addAll(modifiedBlocks.keySet());
+
+        for (FlowPosition pos : allPositions) {
 
             if ((pos.getX() >> 4) != chunkX || (pos.getZ() >> 4) != chunkZ) continue;
 
@@ -147,7 +154,10 @@ public class FlowStage {
                 return newSection;
             });
 
-            WrappedBlockState state = blockDataToState.computeIfAbsent(entry.getValue(), SpigotConversionUtil::fromBukkitBlockData);
+            FlowBlock block = getBlockDataAt(pos);
+            if (block.getBlockData().getMaterial().toString().toLowerCase().contains("air")) continue;
+
+            WrappedBlockState state = blockDataToState.computeIfAbsent(block.getBlockData(), SpigotConversionUtil::fromBukkitBlockData);
             section.set(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, state);
         }
 
@@ -198,8 +208,12 @@ public class FlowStage {
         Map<BlockData, WrappedBlockState> blockDataToState = new HashMap<>();
         WrappedBlockState airState = SpigotConversionUtil.fromBukkitBlockData(Bukkit.createBlockData(Material.AIR));
 
-        for (Map.Entry<FlowPosition, BlockData> entry : blocks.entrySet()) {
-            FlowPosition pos = entry.getKey();
+        // Combine keys from blocks and modifiedBlocks to cover modifications
+        Set<FlowPosition> allPositions = new HashSet<>();
+        allPositions.addAll(blocks.keySet());
+        allPositions.addAll(modifiedBlocks.keySet());
+
+        for (FlowPosition pos : allPositions) {
             int sectionY = (pos.getY() >> 4) - (minHeight >> 4);
 
             if (sectionY < 0 || sectionY >= ySections) continue;
@@ -218,7 +232,10 @@ public class FlowStage {
                 return newSection;
             });
 
-            WrappedBlockState state = blockDataToState.computeIfAbsent(entry.getValue(), SpigotConversionUtil::fromBukkitBlockData);
+            FlowBlock block = getBlockDataAt(pos);
+            if (block.getBlockData().getMaterial().toString().toLowerCase().contains("air")) continue;
+
+            WrappedBlockState state = blockDataToState.computeIfAbsent(block.getBlockData(), SpigotConversionUtil::fromBukkitBlockData);
             section.set(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, state);
         }
 
@@ -252,12 +269,35 @@ public class FlowStage {
                 z >= minZ && z <= maxZ;
     }
 
-    public BlockData getBlockDataAt(FlowPosition pos) {
-        BlockData blockData = blocks.get(pos);
-        if (blockData == null) {
-            return Bukkit.createBlockData(Material.AIR);
+    public FlowBlock getBlockDataAt(FlowPosition pos) {
+        if (modifiedBlocks.containsKey(pos)) {
+            BlockData modified = modifiedBlocks.get(pos);
+            return modified == null ? new FlowBlock(Bukkit.createBlockData(Material.AIR)) : new FlowBlock(modified.clone());
         }
 
-        return blockData.clone();
+        FlowBlock block = blocks.get(pos);
+        if (block == null) {
+            return new FlowBlock(Bukkit.createBlockData(Material.AIR));
+        }
+
+        return block;
+    }
+
+    public void setBlockDataAt(FlowPosition pos, BlockData blockData) {
+        FlowBlock block = blocks.get(pos);
+
+        if (blockData == null || blockData.getMaterial() == Material.AIR) {
+            if (block != null) {
+                modifiedBlocks.put(pos, null);
+            } else {
+                modifiedBlocks.remove(pos);
+            }
+        } else {
+            modifiedBlocks.put(pos, blockData.clone());
+        }
+    }
+
+    public void resetModifications() {
+        modifiedBlocks.clear();
     }
 }
