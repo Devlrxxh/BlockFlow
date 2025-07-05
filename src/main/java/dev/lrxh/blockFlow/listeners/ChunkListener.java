@@ -38,9 +38,7 @@ public class ChunkListener extends PacketListenerAbstract {
 
                 if (stage.isChunkInBounds(chunkX, chunkZ)) {
                     packet.setCancelled(true);
-                    Bukkit.getScheduler().runTaskAsynchronously(blockFlow.getPlugin(), () -> {
-                        stage.sendChunkToPlayer(player, chunkX, chunkZ);
-                    });
+                    Bukkit.getScheduler().runTaskAsynchronously(blockFlow.getPlugin(), () -> stage.sendChunkToPlayer(player, chunkX, chunkZ));
                     return;
                 }
             }

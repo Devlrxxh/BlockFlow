@@ -42,6 +42,9 @@ public class BlockBreakListener extends PacketListenerAbstract {
                 }
 
                 FlowPosition position = new FlowPosition(wrapper.getBlockPosition().getX(), wrapper.getBlockPosition().getY(), wrapper.getBlockPosition().getZ());
+
+                if (!stage.isPositionInBounds(position)) continue;
+
                 FlowBlock block = stage.getBlockDataAt(position);
 
                 if (actionType == DiggingAction.FINISHED_DIGGING || block.canInstantBreak(player)) {

@@ -57,6 +57,7 @@ Fired when a player places a block in a `FlowStage`.
 - [ ] Ender pearl interactions
 - [ ] Liquid flow support
 - [ ] Block ticking
+- [ ] Knockback
 - [x] Block placing
 - [x] Block breaking
 

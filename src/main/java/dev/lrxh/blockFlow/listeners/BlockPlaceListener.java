@@ -51,6 +51,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                         clickedBlockPos.getZ() + face.getModZ()
                 );
 
+                if (!stage.isPositionInBounds(position)) continue;
 
                 packet.setCancelled(true);
 
