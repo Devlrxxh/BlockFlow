@@ -8,6 +8,8 @@ import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.AllArgsConstructor;
+import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 @AllArgsConstructor
@@ -32,9 +34,12 @@ public class BlockChangeListener extends PacketListenerAbstract {
                 FlowPosition flowPosition = new FlowPosition(wrapper.getBlockPosition().getX(), wrapper.getBlockPosition().getY(), wrapper.getBlockPosition().getZ());
                 if (stage.isPositionInBounds(flowPosition)) {
 
-                    if (wrapper.getBlockState().getType().getName().equalsIgnoreCase(stage.getBlockDataAt(flowPosition).getBlockData().getMaterial().name()))
+                    BlockData blockData = stage.getBlockDataAt(flowPosition).getBlockData();
+                    if (wrapper.getBlockState().getType().getName().equalsIgnoreCase(blockData.getMaterial().name())) {
                         continue;
+                    }
 
+                    player.sendBlockChange(flowPosition.toLocation(player.getWorld()), Material.AIR.createBlockData());
                     packet.setCancelled(true);
                     return;
                 }

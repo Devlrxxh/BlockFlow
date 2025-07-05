@@ -55,11 +55,9 @@ public class BlockBreakListener extends PacketListenerAbstract {
                         Location location = position.toLocation(player.getWorld());
 
                         if (event.isCancelled()) {
-                            player.sendBlockChange(location, block.getBlockData());
-                            stage.setBlockDataAt(position, block.getBlockData());
+                            stage.setBlockDataAt(position, block.getBlockData(), blockFlow.getPlugin());
                         } else {
-                            player.sendBlockChange(location, Material.AIR.createBlockData());
-                            stage.setBlockDataAt(position, Material.AIR.createBlockData());
+                            stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
 
                             for (Material drop : block.getDrops()) {
                                 Item item = location.getWorld().dropItemNaturally(location, new ItemStack(drop));
@@ -76,6 +74,6 @@ public class BlockBreakListener extends PacketListenerAbstract {
             }
         }
 
-        packet.markForReEncode(false);
+        packet.markForReEncode(true);
     }
 }

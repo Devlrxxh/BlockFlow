@@ -10,7 +10,6 @@ import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.events.FlowPlaceEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
-import io.papermc.paper.math.BlockPosition;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -31,11 +30,16 @@ public class BlockPlaceListener extends PacketListenerAbstract {
         Player player = packet.getPlayer();
 
         if (packet.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
+
             WrapperPlayClientPlayerBlockPlacement wrapper = new WrapperPlayClientPlayerBlockPlacement(packet);
 
             for (FlowStage stage : blockFlow.getStages()) {
-                if (!stage.getWatchers().contains(player.getUniqueId())) continue;
-                if (!stage.getWorld().equals(player.getWorld())) continue;
+                if (!stage.getWatchers().contains(player.getUniqueId())) {
+                    continue;
+                }
+                if (!stage.getWorld().equals(player.getWorld())) {
+                    continue;
+                }
 
                 Vector3i clickedBlockPos = wrapper.getBlockPosition();
                 BlockFace face = wrapper.getFace();
@@ -46,24 +50,32 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                         clickedBlockPos.getZ() + face.getModZ()
                 );
 
+
                 packet.setCancelled(true);
 
                 Location blockLoc = position.toLocation(player.getWorld());
-                BoundingBox blockBox = BoundingBox.of(blockLoc, blockLoc.getX() + 1, blockLoc.getY() + 1, blockLoc.getZ() + 1);
+                BoundingBox blockBox = BoundingBox.of(
+                        blockLoc.toVector(),
+                        blockLoc.clone().add(1, 1, 1).toVector()
+                );
 
-                for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 2)) {
+                for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 3)) {
                     if (blockBox.overlaps(entity.getBoundingBox())) {
-                        player.sendBlockChange(blockLoc, stage.getBlockDataAt(position).getBlockData());
+                        stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
                         return;
                     }
                 }
 
                 Bukkit.getScheduler().runTask(blockFlow.getPlugin(), () -> {
                     ItemStack itemInHand = player.getInventory().getItemInMainHand();
-                    if (itemInHand == null || !itemInHand.getType().isBlock()) return;
+                    if (itemInHand == null || !itemInHand.getType().isBlock()) {
+                        return;
+                    }
 
                     Material placingMaterial = itemInHand.getType();
-                    if (placingMaterial == Material.AIR) return;
+                    if (placingMaterial == Material.AIR) {
+                        return;
+                    }
 
                     BlockData blockData = placingMaterial.createBlockData();
 
@@ -71,12 +83,11 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                     event.callEvent();
 
                     if (event.isCancelled()) {
-                        player.sendBlockChange(position.toLocation(player.getWorld()), stage.getBlockDataAt(position).getBlockData());
+                        stage.setBlockDataAt(position, stage.getBlockDataAt(position).getBlockData(), blockFlow.getPlugin());
                         return;
                     }
 
-                    stage.setBlockDataAt(position, blockData);
-                    player.sendBlockChange(position.toLocation(player.getWorld()), blockData);
+                    stage.setBlockDataAt(position, blockData, blockFlow.getPlugin());
 
                     if (player.getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
@@ -85,7 +96,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
             }
         }
 
-
-        packet.markForReEncode(false);
+        packet.markForReEncode(true);
     }
+
 }
