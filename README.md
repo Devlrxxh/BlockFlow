@@ -1,7 +1,8 @@
 # Todo:
  - Handle Item drops
- - Explostions
+ - Explosions
  - EnderPearls
  - Liquids
  - ~~Block Placing~~
  - ~~Block breaking~~
+ - Block ticking
