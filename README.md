@@ -65,3 +65,4 @@ Fired when a player places a block in a `FlowStage`.
 
 ## 📄 Dependencies
 - [PacketEvents](https://github.com/retrooper/packetevents)
+- [EntityLib](https://github.com/Tofaa2/EntityLib)
