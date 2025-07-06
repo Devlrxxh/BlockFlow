@@ -50,8 +50,8 @@ public final class BlockFlow {
         PacketEvents.getAPI().init();
 
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new EntityCacheTask(this), 0L, 500L);
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new PlayerGroundCheckTask(this), 0L, 1L);
-        plugin.getServer().getScheduler().runTaskTimer(plugin, new ItemPickupTask(this), 2L, 2L);
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new PlayerGroundCheckTask(this), 0L, 40L);
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new ItemPickupTask(this), 2L, 2L);
     }
 
     public FlowStage createStage(Location pos1, Location pos2) {

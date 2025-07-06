@@ -295,7 +295,7 @@ public class FlowStage {
     }
 
     public void setBlockDataAt(FlowPosition pos, BlockData blockData) {
-        if (blockData == null || blockData.getMaterial() == Material.AIR) {
+        if (blockData.getMaterial() == Material.AIR) {
             blocks.remove(pos);
         } else {
             blocks.put(pos, new FlowBlock(blockData.clone()));
