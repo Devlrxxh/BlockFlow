@@ -1,6 +1,7 @@
 package dev.lrxh.blockFlow.stage;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.world.chunk.BaseChunk;
 import com.github.retrooper.packetevents.protocol.world.chunk.Column;
@@ -13,6 +14,10 @@ import dev.lrxh.blockFlow.stage.impl.FlowBlock;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
+import me.tofaa.entitylib.EntityLib;
+import me.tofaa.entitylib.meta.Metadata;
+import me.tofaa.entitylib.meta.projectile.ItemEntityMeta;
+import me.tofaa.entitylib.wrapper.WrapperEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +25,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +39,8 @@ public class FlowStage {
     private final Set<UUID> watchers;
     @Getter
     private final UUID uuid;
+    @Getter
+    private final Map<WrapperEntity, Long> entities;
     private Map<FlowPosition, FlowBlock> blocks;
 
     public FlowStage(Location pos1, Location pos2) {
@@ -42,6 +50,7 @@ public class FlowStage {
         this.blocks = capture();
         this.watchers = new HashSet<>();
         this.uuid = UUID.randomUUID();
+        this.entities = new HashMap<>();
     }
 
     private FlowStage(World world, Location pos1, Location pos2, Map<FlowPosition, FlowBlock> blocks) {
@@ -51,6 +60,7 @@ public class FlowStage {
         this.blocks = blocks;
         this.watchers = new HashSet<>();
         this.uuid = UUID.randomUUID();
+        this.entities = new HashMap<>();
     }
 
     private Map<FlowPosition, FlowBlock> capture() {
@@ -96,6 +106,10 @@ public class FlowStage {
         for (PacketWrapper<?> packet : buildAllChunkPackets(player)) {
             User packetUser = PacketEvents.getAPI().getPlayerManager().getUser(player);
             packetUser.sendPacketSilently(packet);
+        }
+
+        for (WrapperEntity entity : entities.keySet()) {
+            entity.addViewer(player.getUniqueId());
         }
     }
 
@@ -291,6 +305,27 @@ public class FlowStage {
             }
         });
     }
+
+    public void dropItem(Material material, FlowPosition position) {
+        ItemStack itemStack = new ItemStack(material);
+        UUID uuid = UUID.randomUUID();
+        int entityId = EntityLib.getPlatform().getEntityIdProvider().provide(uuid, EntityTypes.ITEM);
+
+        ItemEntityMeta meta = new ItemEntityMeta(entityId, new Metadata(entityId));
+        meta.setItem(SpigotConversionUtil.fromBukkitItemStack(itemStack));
+        meta.setHasNoGravity(false);
+
+        WrapperEntity entity = new WrapperEntity(entityId, uuid, EntityTypes.ITEM, meta);
+
+        this.entities.put(entity, System.currentTimeMillis());
+
+        for (UUID viewer : watchers) {
+            entity.addViewer(viewer);
+        }
+
+        entity.spawn(SpigotConversionUtil.fromBukkitLocation(position.toLocation(world).add(0.5, 1, 0.5)));
+    }
+
 
     public FlowStage clone() {
         return new FlowStage(world, pos1, pos2, new HashMap<>(blocks));

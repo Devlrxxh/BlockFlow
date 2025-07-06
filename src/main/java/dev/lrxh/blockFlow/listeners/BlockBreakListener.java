@@ -12,13 +12,8 @@ import dev.lrxh.blockFlow.stage.impl.FlowBlock;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 @AllArgsConstructor
 public class BlockBreakListener extends PacketListenerAbstract {
@@ -55,13 +50,14 @@ public class BlockBreakListener extends PacketListenerAbstract {
                         FlowBreakEvent event = new FlowBreakEvent(player, position, block, stage);
                         event.callEvent();
 
-                        Location location = position.toLocation(player.getWorld());
-
                         if (event.isCancelled()) {
                             stage.setBlockDataAt(position, block.getBlockData(), blockFlow.getPlugin());
                         } else {
                             stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
-                            // HANDLE BLOCK DROPS
+                            for (Material material : block.getDrops()) {
+                                stage.dropItem(material, position);
+                            }
+
                         }
                     });
                 }

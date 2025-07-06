@@ -67,6 +67,11 @@
             <id>codemc-snapshots</id>
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
+        <repository>
+            <id>evoke-snapshots</id>
+            <name>EvokeGames Maven</name>
+            <url>https://maven.evokegames.gg/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -87,6 +92,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.tofaa.entitylib</groupId>
+            <artifactId>spigot</artifactId>
+            <version>+6fba8ea-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

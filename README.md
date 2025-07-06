@@ -52,7 +52,7 @@ Fired when a player places a block in a `FlowStage`.
 
 ## 🗺️ Roadmap
 
-- [ ] Item drop simulation
+- [x] Item drop simulation
 - [ ] Explosion handling
 - [ ] Ender pearl interactions
 - [ ] Liquid flow support

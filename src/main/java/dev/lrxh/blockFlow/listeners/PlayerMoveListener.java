@@ -79,7 +79,7 @@ public class PlayerMoveListener extends PacketListenerAbstract {
                         (int) Math.floor(wrapper.getPosition().getZ())
                 );
 
-               if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
+                if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
                     wrapper.setOnGround(true);
                 }
 
@@ -106,7 +106,7 @@ public class PlayerMoveListener extends PacketListenerAbstract {
                         (int) Math.floor(wrapper.getLocation().getZ())
                 );
 
-               if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
+                if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
                     wrapper.setOnGround(true);
                 }
 
@@ -133,7 +133,7 @@ public class PlayerMoveListener extends PacketListenerAbstract {
                         (int) Math.floor(wrapper.getLocation().getZ())
                 );
 
-               if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
+                if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
                     wrapper.setOnGround(true);
                 }
 
@@ -169,7 +169,7 @@ public class PlayerMoveListener extends PacketListenerAbstract {
                         (int) Math.floor(location.getZ())
                 );
 
-               if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
+                if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
                     wrapper.setOnGround(true);
                 }
             }
@@ -225,7 +225,7 @@ public class PlayerMoveListener extends PacketListenerAbstract {
                         (int) Math.floor(location.getZ())
                 );
 
-               if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
+                if (stage.getBlockDataAt(position).getBlockData().getMaterial() != Material.AIR) {
                     wrapper.setOnGround(true);
                 }
             }
