@@ -4,7 +4,6 @@ import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

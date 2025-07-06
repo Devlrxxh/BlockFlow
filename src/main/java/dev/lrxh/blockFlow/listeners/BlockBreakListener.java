@@ -41,20 +41,20 @@ public class BlockBreakListener extends PacketListenerAbstract {
 
                 if (!stage.isPositionInBounds(position)) continue;
 
+                packet.setCancelled(true);
+
                 FlowBlock block = stage.getBlockDataAt(position);
 
                 if (actionType == DiggingAction.FINISHED_DIGGING || block.canInstantBreak(player)) {
-                    packet.setCancelled(true);
-
                     Bukkit.getScheduler().runTask(blockFlow.getPlugin(), () -> {
 
                         FlowBreakEvent event = new FlowBreakEvent(player, position, block, stage);
                         event.callEvent();
 
                         if (event.isCancelled()) {
-                            stage.setBlockDataAt(position, block.getBlockData(), blockFlow.getPlugin());
+                            stage.setBlockDataAt(position, block.getBlockData());
                         } else {
-                            stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
+                            stage.setBlockDataAt(position, Material.AIR.createBlockData());
                             for (Material material : block.getDrops()) {
 
                                 FlowItemDropEvent dropEvent = new FlowItemDropEvent(player, position, material, stage);

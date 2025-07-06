@@ -60,7 +60,7 @@ public class BlockPlaceListener extends PacketListenerAbstract {
 
                 for (Entity entity : blockFlow.getEntityCache().getNearbyLivingEntities(blockLoc, 3)) {
                     if (blockBox.overlaps(entity.getBoundingBox())) {
-                        stage.setBlockDataAt(position, Material.AIR.createBlockData(), blockFlow.getPlugin());
+                        stage.setBlockDataAt(position, Material.AIR.createBlockData());
                         return;
                     }
                 }
@@ -82,11 +82,11 @@ public class BlockPlaceListener extends PacketListenerAbstract {
                     event.callEvent();
 
                     if (event.isCancelled()) {
-                        stage.setBlockDataAt(position, stage.getBlockDataAt(position).getBlockData(), blockFlow.getPlugin());
+                        stage.setBlockDataAt(position, stage.getBlockDataAt(position).getBlockData());
                         return;
                     }
 
-                    stage.setBlockDataAt(position, blockData, blockFlow.getPlugin());
+                    stage.setBlockDataAt(position, blockData);
 
                     if (player.getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
