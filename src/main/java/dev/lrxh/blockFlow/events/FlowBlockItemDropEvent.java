@@ -11,7 +11,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class FlowItemDropEvent extends Event implements Cancellable {
+public class FlowBlockItemDropEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
     private final FlowPosition position;
@@ -19,7 +19,7 @@ public class FlowItemDropEvent extends Event implements Cancellable {
     private final FlowStage stage;
     private boolean cancelled = false;
 
-    public FlowItemDropEvent(Player player, FlowPosition position, Material material, FlowStage stage) {
+    public FlowBlockItemDropEvent(Player player, FlowPosition position, Material material, FlowStage stage) {
         this.player = player;
         this.position = position;
         this.material = material;

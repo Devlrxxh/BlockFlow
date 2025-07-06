@@ -1,9 +1,11 @@
 package dev.lrxh.blockFlow.listeners;
 
 import dev.lrxh.blockFlow.BlockFlow;
+import dev.lrxh.blockFlow.events.FlowPlayerItemDropEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.AllArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,15 +38,21 @@ public class BukkitListener implements Listener {
         int y = event.getItemDrop().getLocation().getBlockY();
         int z = event.getItemDrop().getLocation().getBlockZ();
 
-        for (FlowStage flowStage : blockFlow.getStages()) {
-            if (!flowStage.getWatchers().contains(player.getUniqueId())) continue;
+        FlowPosition position = new FlowPosition(x, y, z);
+        Material material = event.getItemDrop().getItemStack().getType();
 
-            if (flowStage.isPositionInBounds(new FlowPosition(x, y, z))) {
+        for (FlowStage stage : blockFlow.getStages()) {
+            if (!stage.getWatchers().contains(player.getUniqueId())) continue;
+
+            if (stage.isPositionInBounds(position)) {
+                FlowPlayerItemDropEvent dropEvent = new FlowPlayerItemDropEvent(player, position, material, stage);
+                dropEvent.callEvent();
+                if (dropEvent.isCancelled()) return;
                 event.setCancelled(true);
                 player.getInventory().remove(event.getItemDrop().getItemStack());
 
-                flowStage.dropItem(event.getItemDrop().getItemStack().getType(),
-                        new FlowPosition(x, y, z));
+                stage.dropItem(material,
+                        position);
             }
         }
     }

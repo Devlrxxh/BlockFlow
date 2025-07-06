@@ -6,8 +6,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
 import dev.lrxh.blockFlow.BlockFlow;
+import dev.lrxh.blockFlow.events.FlowBlockItemDropEvent;
 import dev.lrxh.blockFlow.events.FlowBreakEvent;
-import dev.lrxh.blockFlow.events.FlowItemDropEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowBlock;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
@@ -57,7 +57,7 @@ public class BlockBreakListener extends PacketListenerAbstract {
                             stage.setBlockDataAt(position, Material.AIR.createBlockData());
                             for (Material material : block.getDrops()) {
 
-                                FlowItemDropEvent dropEvent = new FlowItemDropEvent(player, position, material, stage);
+                                FlowBlockItemDropEvent dropEvent = new FlowBlockItemDropEvent(player, position, material, stage);
                                 dropEvent.callEvent();
                                 if (!dropEvent.isCancelled()) {
                                     stage.dropItem(material, position);
