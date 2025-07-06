@@ -28,7 +28,7 @@ public final class BlockFlow {
     public BlockFlow(JavaPlugin plugin) {
         this.plugin = plugin;
         this.stages = new ArrayList<>();
-        this.entityCache = new EntityCache();
+        this.entityCache = new EntityCache(this);
 
         Arrays.asList(
                 new BukkitListener(this),
