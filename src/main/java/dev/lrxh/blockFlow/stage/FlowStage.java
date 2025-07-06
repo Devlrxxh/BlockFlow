@@ -307,7 +307,7 @@ public class FlowStage {
         }
     }
 
-    public void dropItem(Material material, FlowPosition position) {
+    public void dropItem(Material material, Location location) {
         ItemStack itemStack = new ItemStack(material);
         UUID uuid = UUID.randomUUID();
         int entityId = EntityLib.getPlatform().getEntityIdProvider().provide(uuid, EntityTypes.ITEM);
@@ -324,7 +324,7 @@ public class FlowStage {
             entity.addViewer(viewer);
         }
 
-        entity.spawn(SpigotConversionUtil.fromBukkitLocation(position.toLocation(world).add(0.5, 0.5, 0.5)));
+        entity.spawn(SpigotConversionUtil.fromBukkitLocation(location.clone().add(0.5, 0.5, 0.5)));
     }
 
 

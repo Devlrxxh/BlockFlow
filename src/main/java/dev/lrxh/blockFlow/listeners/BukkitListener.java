@@ -51,8 +51,7 @@ public class BukkitListener implements Listener {
                 event.setCancelled(true);
                 player.getInventory().remove(event.getItemDrop().getItemStack());
 
-                stage.dropItem(material,
-                        position);
+                stage.dropItem(material, event.getItemDrop().getLocation());
             }
         }
     }
