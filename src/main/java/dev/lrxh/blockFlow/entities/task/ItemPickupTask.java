@@ -9,9 +9,11 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.tofaa.entitylib.meta.projectile.ItemEntityMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -53,8 +55,10 @@ public class ItemPickupTask implements Runnable {
                         event.callEvent();
                         if (event.isCancelled()) continue;
 
-                        player.getInventory().addItem(item);
-                        player.playSound(player.getLocation(), "entity.item.pickup", 1.0f, 1.0f);
+                        HashMap<Integer, ItemStack> remaining = player.getInventory().addItem(item);
+                        if (!remaining.isEmpty()) continue;
+
+                        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
 
                         WrapperPlayServerCollectItem collectItemPacket = new WrapperPlayServerCollectItem(
                                 entity.getEntityId(),
@@ -72,4 +76,5 @@ public class ItemPickupTask implements Runnable {
             }
         }
     }
+
 }
