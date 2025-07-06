@@ -33,7 +33,6 @@ public class EntityCache {
         if (world == null) return Collections.emptyList();
 
         List<LivingEntity> nearbyEntities = new ArrayList<>();
-        double radiusSquared = radius * radius;
         int chunkRadius = (int) Math.ceil(radius / 16.0);
 
         int centerChunkX = location.getBlockX() >> 4;
@@ -47,10 +46,11 @@ public class EntityCache {
                 if (!world.isChunkLoaded(chunkX, chunkZ)) continue;
 
                 for (Entity entity : world.getChunkAt(chunkX, chunkZ).getEntities()) {
+                    if (entity == null) continue;
+
                     if (entity instanceof LivingEntity living) {
-                        if (entity.getLocation().distanceSquared(location) <= radiusSquared) {
-                            nearbyEntities.add(living);
-                        }
+                        if (entity.getLocation().distanceSquared(location) > radius * radius) continue;
+                        nearbyEntities.add(living);
                     }
                 }
             }
