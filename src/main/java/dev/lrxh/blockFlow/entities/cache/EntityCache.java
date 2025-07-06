@@ -7,43 +7,45 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 public class EntityCache {
-    private Map<Integer, Entity> entities;
+    private final Map<Integer, Entity> entities;
 
     public EntityCache() {
         this.entities = new HashMap<>();
     }
 
-    public List<Entity> getNearbyLivingEntities(Location location, double radius) {
-
-        double expander = 16.0D;
-
+    public List<LivingEntity> getNearbyLivingEntities(Location location, double radius) {
+        double chunkSize = 16.0D;
         double x = location.getX();
         double z = location.getZ();
+        double radiusSquared = radius * radius;
 
-        int minX = (int) Math.floor((x - radius) / expander);
-        int maxX = (int) Math.floor((x + radius) / expander);
-
-        int minZ = (int) Math.floor((z - radius) / expander);
-        int maxZ = (int) Math.floor((z + radius) / expander);
+        int minX = (int) Math.floor((x - radius) / chunkSize);
+        int maxX = (int) Math.floor((x + radius) / chunkSize);
+        int minZ = (int) Math.floor((z - radius) / chunkSize);
+        int maxZ = (int) Math.floor((z + radius) / chunkSize);
 
         World world = location.getWorld();
+        if (world == null) return Collections.emptyList();
 
-        List<Entity> entities = new ArrayList<>();
+        List<LivingEntity> nearby = new ArrayList<>();
 
         for (int xVal = minX; xVal <= maxX; xVal++) {
             for (int zVal = minZ; zVal <= maxZ; zVal++) {
                 if (world.isChunkLoaded(xVal, zVal)) {
-                    entities.addAll(Arrays.asList(world.getChunkAt(xVal, zVal).getEntities()));
+                    for (Entity entity : world.getChunkAt(xVal, zVal).getEntities()) {
+                        if (entity instanceof LivingEntity) {
+                            if (entity.getLocation().distanceSquared(location) <= radiusSquared) {
+                                nearby.add((LivingEntity) entity);
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        entities.removeIf(entity -> entity.getLocation().distanceSquared(location) > radius * radius);
-
-        return entities;
+        return nearby;
     }
 }
