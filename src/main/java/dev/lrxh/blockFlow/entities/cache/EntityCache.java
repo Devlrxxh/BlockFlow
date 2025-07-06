@@ -2,6 +2,7 @@ package dev.lrxh.blockFlow.entities.cache;
 
 import dev.lrxh.blockFlow.BlockFlow;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -9,29 +10,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 @Getter
 public class EntityCache {
 
-    private final Map<Integer, Entity> entities = new HashMap<>();
+    private final Map<Integer, Entity> entities;
     private final BlockFlow blockFlow;
 
     public EntityCache(BlockFlow blockFlow) {
         this.blockFlow = blockFlow;
+        this.entities = new HashMap<>();
     }
 
+    @SneakyThrows
     public List<LivingEntity> getNearbyLivingEntities(Location location, double radius) {
-        Future<List<LivingEntity>> future = Bukkit.getScheduler().callSyncMethod(blockFlow.getPlugin(), () ->
-                findNearbyLivingEntities(location, radius)
-        );
-
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            return Collections.emptyList();
-        }
+        return Bukkit.getScheduler().callSyncMethod(blockFlow.getPlugin(), () ->
+                findNearbyLivingEntities(location, radius)).get();
     }
 
     private List<LivingEntity> findNearbyLivingEntities(Location location, double radius) {
