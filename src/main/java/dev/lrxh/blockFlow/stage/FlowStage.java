@@ -114,6 +114,10 @@ public class FlowStage {
 
     public void removeViewer(Player player) {
         watchers.remove(player.getUniqueId());
+
+        for (WrapperEntity entity : entities.keySet()) {
+            entity.removeViewer(player.getUniqueId());
+        }
     }
 
     public void sendChunkToPlayer(Player player, int chunkX, int chunkZ) {
