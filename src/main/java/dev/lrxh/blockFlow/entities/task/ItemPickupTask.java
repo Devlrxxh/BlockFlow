@@ -3,6 +3,8 @@ package dev.lrxh.blockFlow.entities.task;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCollectItem;
 import dev.lrxh.blockFlow.BlockFlow;
+import dev.lrxh.blockFlow.events.FlowItemDropEvent;
+import dev.lrxh.blockFlow.events.FlowItemPickupEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.tofaa.entitylib.meta.projectile.ItemEntityMeta;
@@ -47,6 +49,11 @@ public class ItemPickupTask implements Runnable {
 
                     if (distance <= 2) {
                         ItemStack item = SpigotConversionUtil.toBukkitItemStack(meta.getItem());
+
+                        FlowItemPickupEvent event = new FlowItemPickupEvent(player, item, stage);
+                        event.callEvent();
+                        if (event.isCancelled()) continue;
+
                         player.getInventory().addItem(item);
                         player.playSound(player.getLocation(), "entity.item.pickup", 1.0f, 1.0f);
 
