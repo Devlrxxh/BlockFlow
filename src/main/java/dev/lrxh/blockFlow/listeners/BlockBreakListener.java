@@ -60,7 +60,7 @@ public class BlockBreakListener extends PacketListenerAbstract {
                                 FlowBlockItemDropEvent dropEvent = new FlowBlockItemDropEvent(player, position, material, stage);
                                 dropEvent.callEvent();
                                 if (!dropEvent.isCancelled()) {
-                                    stage.dropItem(material, position.toLocation(stage.getWorld()));
+                                    stage.dropItem(material, position.toLocation(stage.getWorld()), blockFlow);
                                 }
                             }
 

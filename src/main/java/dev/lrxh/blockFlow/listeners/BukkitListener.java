@@ -5,6 +5,7 @@ import dev.lrxh.blockFlow.events.FlowPlayerItemDropEvent;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import lombok.AllArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,26 +35,33 @@ public class BukkitListener implements Listener {
     public void onItemDrop(EntityDropItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        int x = event.getItemDrop().getLocation().getBlockX();
-        int y = event.getItemDrop().getLocation().getBlockY();
-        int z = event.getItemDrop().getLocation().getBlockZ();
+        double distance = 1.5;
+        Location eye = player.getEyeLocation();
+        Location dropLocation = eye.clone()
+                .add( eye.getDirection().normalize().multiply(distance) );
 
-        FlowPosition position = new FlowPosition(x, y, z);
         Material material = event.getItemDrop().getItemStack().getType();
 
         for (FlowStage stage : blockFlow.getStages()) {
             if (!stage.getWatchers().contains(player.getUniqueId())) continue;
+            FlowPosition pos = new FlowPosition(
+                    dropLocation.getBlockX(),
+                    dropLocation.getBlockY(),
+                    dropLocation.getBlockZ()
+            );
 
-            if (stage.isPositionInBounds(position)) {
-                FlowPlayerItemDropEvent dropEvent = new FlowPlayerItemDropEvent(player, position, material, stage);
+            if (stage.isPositionInBounds(pos)) {
+                FlowPlayerItemDropEvent dropEvent =
+                        new FlowPlayerItemDropEvent(player, pos, material, stage);
                 dropEvent.callEvent();
                 if (dropEvent.isCancelled()) return;
+
                 event.setCancelled(true);
                 player.getInventory().remove(event.getItemDrop().getItemStack());
-
-                stage.dropItem(material, event.getItemDrop().getLocation());
+                stage.dropItem(material, dropLocation, blockFlow);
             }
         }
     }
+
 }
 

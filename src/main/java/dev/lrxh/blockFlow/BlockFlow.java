@@ -7,6 +7,7 @@ import dev.lrxh.blockFlow.entities.task.EntityCacheTask;
 import dev.lrxh.blockFlow.entities.task.ItemPickupTask;
 import dev.lrxh.blockFlow.entities.task.PlayerGroundCheckTask;
 import dev.lrxh.blockFlow.listeners.*;
+import dev.lrxh.blockFlow.projectiles.ProjectileHandler;
 import dev.lrxh.blockFlow.stage.FlowStage;
 import lombok.Getter;
 import me.tofaa.entitylib.APIConfig;
@@ -24,11 +25,13 @@ public final class BlockFlow {
     private final JavaPlugin plugin;
     private final List<FlowStage> stages;
     private final EntityCache entityCache;
+    private final ProjectileHandler projectileHandler;
 
     public BlockFlow(JavaPlugin plugin) {
         this.plugin = plugin;
         this.stages = new ArrayList<>();
         this.entityCache = new EntityCache(this);
+        this.projectileHandler = new ProjectileHandler(this);
 
         Arrays.asList(
                 new BukkitListener(this),

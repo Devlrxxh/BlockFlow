@@ -8,15 +8,14 @@ import com.github.retrooper.packetevents.protocol.world.chunk.Column;
 import com.github.retrooper.packetevents.protocol.world.chunk.LightData;
 import com.github.retrooper.packetevents.protocol.world.chunk.impl.v_1_18.Chunk_v1_18;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChunkData;
+import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.stage.impl.FlowBlock;
 import dev.lrxh.blockFlow.stage.impl.FlowPosition;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
-import me.tofaa.entitylib.EntityLib;
-import me.tofaa.entitylib.meta.Metadata;
-import me.tofaa.entitylib.meta.projectile.ItemEntityMeta;
 import me.tofaa.entitylib.wrapper.WrapperEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +24,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -307,24 +305,9 @@ public class FlowStage {
         }
     }
 
-    public void dropItem(Material material, Location location) {
-        ItemStack itemStack = new ItemStack(material);
-        UUID uuid = UUID.randomUUID();
-        int entityId = EntityLib.getPlatform().getEntityIdProvider().provide(uuid, EntityTypes.ITEM);
-
-        ItemEntityMeta meta = new ItemEntityMeta(entityId, new Metadata(entityId));
-        meta.setItem(SpigotConversionUtil.fromBukkitItemStack(itemStack));
-        meta.setHasNoGravity(false);
-
-        WrapperEntity entity = new WrapperEntity(entityId, uuid, EntityTypes.ITEM, meta);
-
+    public void dropItem(Material material, Location location, BlockFlow blockFlow) {
+        WrapperEntity entity = blockFlow.getProjectileHandler().get(EntityTypes.ITEM).handle(material, location, watchers);
         this.entities.put(entity, System.currentTimeMillis());
-
-        for (UUID viewer : watchers) {
-            entity.addViewer(viewer);
-        }
-
-        entity.spawn(SpigotConversionUtil.fromBukkitLocation(location.clone().add(0.5, 0.5, 0.5)));
     }
 
 
