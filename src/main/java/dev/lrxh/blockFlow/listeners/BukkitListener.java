@@ -35,10 +35,7 @@ public class BukkitListener implements Listener {
     public void onItemDrop(EntityDropItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        double distance = 1.5;
-        Location eye = player.getEyeLocation();
-        Location dropLocation = eye.clone()
-                .add( eye.getDirection().normalize().multiply(distance) );
+        Location dropLocation = player.getEyeLocation().clone().add(0, -0.3, 0);
 
         Material material = event.getItemDrop().getItemStack().getType();
 
@@ -55,13 +52,11 @@ public class BukkitListener implements Listener {
                         new FlowPlayerItemDropEvent(player, pos, material, stage);
                 dropEvent.callEvent();
                 if (dropEvent.isCancelled()) return;
-
                 event.setCancelled(true);
                 player.getInventory().remove(event.getItemDrop().getItemStack());
                 stage.dropItem(material, dropLocation, blockFlow);
             }
         }
     }
-
 }
 

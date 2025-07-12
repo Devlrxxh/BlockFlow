@@ -19,6 +19,9 @@ public class ItemProjectile implements IProjectile {
 
     @Override
     public WrapperEntity handle(Material material, Location location, Set<UUID> viewers) {
+        // Adjust drop position to match vanilla behavior (eye level - 0.3)
+        Location dropLocation = location.clone().add(0, -0.3, 0);
+
         ItemStack itemStack = new ItemStack(material);
         UUID uuid = UUID.randomUUID();
         int entityId = EntityLib.getPlatform().getEntityIdProvider().provide(uuid, EntityTypes.ITEM);
@@ -32,16 +35,24 @@ public class ItemProjectile implements IProjectile {
             entity.addViewer(viewer);
         }
 
-        Vector3d dir = new Vector3d(location.getDirection().toVector3d().x, location.getDirection().toVector3d().y, location.getDirection().toVector3d().z);
-        double speed = 0.3;
-        Random rand = new Random();
-        Vector3d vel = new Vector3d(
-                dir.x * speed + rand.nextGaussian() * 0.02,
-                dir.y * speed + rand.nextGaussian() * 0.02,
-                dir.z * speed + rand.nextGaussian() * 0.02
-        );
-        entity.spawn(SpigotConversionUtil.fromBukkitLocation(location));
-        entity.setVelocity(vel);
+        Vector3d velocity = getVanillaDropVelocity();
+
+        entity.spawn(SpigotConversionUtil.fromBukkitLocation(dropLocation));
+        entity.setVelocity(velocity);
+
         return entity;
+    }
+
+    private Vector3d getVanillaDropVelocity() {
+        Random rand = new Random();
+
+        float f = rand.nextFloat() * 0.5F;
+        float angle = rand.nextFloat() * (float) (2 * Math.PI);
+
+        double dx = -Math.sin(angle) * f;
+        double dy = 0.2;
+        double dz = Math.cos(angle) * f;
+
+        return new Vector3d(dx, dy, dz);
     }
 }
