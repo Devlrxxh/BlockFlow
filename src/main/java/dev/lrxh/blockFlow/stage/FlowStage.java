@@ -8,8 +8,8 @@ import com.github.retrooper.packetevents.protocol.world.chunk.Column;
 import com.github.retrooper.packetevents.protocol.world.chunk.LightData;
 import com.github.retrooper.packetevents.protocol.world.chunk.impl.v_1_18.Chunk_v1_18;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
-import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockChange;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChunkData;
 import dev.lrxh.blockFlow.BlockFlow;
 import dev.lrxh.blockFlow.stage.impl.FlowBlock;
@@ -301,7 +301,10 @@ public class FlowStage {
 
         for (UUID watcher : watchers) {
             Player player = Bukkit.getPlayer(watcher);
-            player.sendBlockChange(pos.toLocation(world), blockData);
+
+            WrapperPlayServerBlockChange packet = new WrapperPlayServerBlockChange(pos.toVector3i(), SpigotConversionUtil.fromBukkitBlockData(blockData).getGlobalId());
+            User packetUser = PacketEvents.getAPI().getPlayerManager().getUser(player);
+            packetUser.sendPacketSilently(packet);
         }
     }
 
